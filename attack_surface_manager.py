@@ -709,13 +709,18 @@ class AttackSurfaceManager:
 # Main function for command-line usage
 def main():
     import sys
+    import argparse
     
-    if len(sys.argv) != 2:
-        print("Usage: python attack_surface_manager.py <target_url>")
-        print("Example: python attack_surface_manager.py https://example.com")
+    parser = argparse.ArgumentParser(description='Attack Surface Management Tool')
+    parser.add_argument('target_url', nargs='?', help='Target URL to scan (e.g., https://example.com)')
+    
+    args = parser.parse_args()
+    
+    if not args.target_url:
+        parser.print_help()
         sys.exit(1)
     
-    target_url = sys.argv[1]
+    target_url = args.target_url
     
     # Validate URL
     if not target_url.startswith(('http://', 'https://')):
@@ -748,107 +753,6 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
-    def run_comprehensive_scan(self):
-        """Run comprehensive security scan with stealth techniques"""
-        self.log(f"[*] بدء فحص الهدف: {self.target_url}")
-        self.log("[*] جاري تجاوز جدار الحماية...")
-        
-        # Apply stealth techniques first
-        stealth_result = self.bypass_firewall()
-        self.log(f"[*] {stealth_result}")
-        
-        # Run stealth scan
-        return self.run_stealth_scan()
-        
-        # Bypass firewall
-        firewall_result = self.bypass_firewall()
-        self.log(f"[+] {firewall_result}")
-        
-        # Discover endpoints
-        self.log("[*] جاري اكتشاف النقاط الطرفية...")
-        endpoints = self.discover_endpoints()
-        self.log(f"[+] تم اكتشاف {len(endpoints)} نقطة طرفية")
-        
-        # Scan each endpoint
-        for endpoint in endpoints:
-            endpoint_url = endpoint['url']
-            print(f"[*] فحص النقطة: {endpoint_url}")
-            
-            # Get forms and parameters
-            try:
-                response = self.session.get(endpoint_url, headers=self.headers, verify=False, timeout=10)
-                soup = BeautifulSoup(response.text, 'html.parser')
-                forms = soup.find_all('form')
-                
-                # Extract form parameters
-                form_params = []
-                for form in forms:
-                    for input_field in form.find_all('input'):
-                        if input_field.get('name'):
-                            form_params.append(input_field.get('name'))
-                
-                # Extract URL parameters
-                url_params = re.findall(r'\?(\w+)=', endpoint_url)
-                all_params = list(set(form_params + url_params))
-                
-                # Run all vulnerability scans
-                with ThreadPoolExecutor(max_workers=5) as executor:
-                    future_to_scan = {
-                        executor.submit(self.scan_sql_injection, endpoint_url, all_params): 'SQL Injection',
-                        executor.submit(self.scan_xss, endpoint_url, forms): 'XSS',
-                        executor.submit(self.scan_xxe, endpoint_url): 'XXE',
-                        executor.submit(self.scan_rce, endpoint_url, all_params): 'RCE',
-                        executor.submit(self.scan_lfi, endpoint_url, all_params): 'LFI',
-                        executor.submit(self.scan_idor, endpoint_url): 'IDOR',
-                        executor.submit(self.scan_cors, endpoint_url): 'CORS',
-                        executor.submit(self.scan_zero_day, endpoint_url): 'Zero-Day'
-                    }
-                    
-                    for future in as_completed(future_to_scan):
-                        scan_type = future_to_scan[future]
-                        try:
-                            vulns = future.result()
-                            if vulns:
-                                self.vulnerabilities.extend(vulns)
-                                print(f"[+] تم اكتشاف {len(vulns)} ثغرة من نوع {scan_type}")
-                                
-                                # Attempt exploitation for high/critical vulnerabilities
-                                for vuln in vulns:
-                                    if vuln['severity'] in ['High', 'Critical']:
-                                        print(f"[*] جاري استغلال ثغرة {vuln['type']}...")
-                                        exploit_result = self.exploit_vulnerability(vuln)
-                                        if exploit_result['exploitation_successful']:
-                                            self.exploited_vulns.append(exploit_result)
-                                            print(f"[+] تم استغلال الثغرة بنجاح!")
-                        except Exception as e:
-                            print(f"[-] فشل فحص {scan_type}: {str(e)}")
-            
-            except Exception as e:
-                print(f"[-] فشل فحص النقطة {endpoint_url}: {str(e)}")
-                continue
-        
-        # Extract sensitive data from main target
-        print("[*] جاري استخراج البيانات الحساسة...")
-        extracted_data = self.extract_sensitive_data(self.target_url)
-        self.extracted_data.extend(extracted_data)
-        print(f"[+] تم استخراج {len(extracted_data)} عنصر من البيانات الحساسة")
-        
-        # Generate report
-        print("[*] جاري إنشاء التقرير...")
-        report = self.generate_report()
-        
-        # Save report to file
-        report_filename = f"reports/scan_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-        with open(report_filename, 'w', encoding='utf-8') as f:
-            json.dump(report, f, ensure_ascii=False, indent=2)
-        
-        print(f"[+] تم حفظ التقرير: {report_filename}")
-        print(f"[+] تم اكتشاف {len(self.vulnerabilities)} ثغرة أمنية")
-        print(f"[+] تم استغلال {len(self.exploited_vulns)} ثغرة")
-        print(f"[+] تم استخراج {len(self.extracted_data)} عنصر من البيانات")
-        
-        return report
     
     def scan_rce(self, url, params=None):
         """Scan for Remote Code Execution vulnerabilities"""
