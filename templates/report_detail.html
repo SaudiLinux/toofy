@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تفاصيل التقرير - Attack Surface Management Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .nav-links {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 25px;
+            transition: background 0.3s;
+        }
+        
+        .nav-links a:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .report-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .scan-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-right: 5px solid #667eea;
+        }
+        
+        .scan-info h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            border: 1px solid #eee;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            color: #555;
+        }
+        
+        .info-value {
+            color: #333;
+        }
+        
+        .statistics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .vulnerabilities {
+            margin-top: 30px;
+        }
+        
+        .vulnerabilities h2 {
+            color: #dc3545;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .vuln-card {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 5px solid #dc3545;
+        }
+        
+        .vuln-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .vuln-type {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #dc3545;
+        }
+        
+        .severity {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .severity.critical {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .severity.high {
+            background: #fd7e14;
+            color: white;
+        }
+        
+        .severity.medium {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .vuln-details {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .vuln-endpoint {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+        
+        .exploits {
+            margin-top: 30px;
+        }
+        
+        .exploits h2 {
+            color: #28a745;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .exploit-card {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .exploit-header {
+            font-weight: bold;
+            color: #155724;
+            margin-bottom: 10px;
+        }
+        
+        .extracted-data {
+            margin-top: 30px;
+        }
+        
+        .extracted-data h2 {
+            color: #17a2b8;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .data-card {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .data-header {
+            font-weight: bold;
+            color: #0c5460;
+            margin-bottom: 10px;
+        }
+        
+        .data-content {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .no-data {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 40px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background: #5a6fd8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 تفاصيل تقرير فحص الأمان</h1>
+        </div>
+        
+        <div class="nav-links">
+            <a href="/">الرئيسية</a>
+            <a href="/reports">التقارير</a>
+        </div>
+        
+        <div class="report-content">
+            {% if report %}
+            <div class="scan-info">
+                <h2>معلومات الفحص</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">الهدف:</span>
+                        <span class="info-value">{{ report.scan_info.target }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">تاريخ الفحص:</span>
+                        <span class="info-value">{{ report.scan_info.scan_date }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">إصدار الأداة:</span>
+                        <span class="info-value">{{ report.scan_info.scanner_version }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">المطور:</span>
+                        <span class="info-value">{{ report.scan_info.developer }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="statistics">
+                <div class="stat-card">
+                    <div class="stat-number">{{ report.statistics.total_vulnerabilities }}</div>
+                    <div class="stat-label">إجمالي الثغرات</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ report.statistics.critical_vulnerabilities }}</div>
+                    <div class="stat-label">ثغرات حرجة</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ report.statistics.high_vulnerabilities }}</div>
+                    <div class="stat-label">ثغرات عالية الخطورة</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ report.statistics.medium_vulnerabilities }}</div>
+                    <div class="stat-label">ثغرات متوسطة الخطورة</div>
+                </div>
+            </div>
+            
+            {% if report.vulnerabilities %}
+            <div class="vulnerabilities">
+                <h2>🔍 الثغرات الأمنية المكتشفة</h2>
+                {% for vuln in report.vulnerabilities %}
+                <div class="vuln-card">
+                    <div class="vuln-header">
+                        <span class="vuln-type">{{ vuln.type }}</span>
+                        <span class="severity {{ vuln.severity.lower() }}">{{ vuln.severity }}</span>
+                    </div>
+                    <div class="vuln-details">
+                        <p><strong>الوصف:</strong> {{ vuln.description }}</p>
+                        {% if vuln.endpoint %}
+                        <div class="vuln-endpoint">
+                            <strong>النقطة:</strong> {{ vuln.endpoint }}
+                        </div>
+                        {% endif %}
+                        {% if vuln.payload %}
+                        <p><strong>الحمولة المستخدمة:</strong> <code>{{ vuln.payload }}</code></p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            {% if report.exploits %}
+            <div class="exploits">
+                <h2>⚡ عمليات الاستغلال الناجحة</h2>
+                {% for exploit in report.exploits %}
+                <div class="exploit-card">
+                    <div class="exploit-header">
+                        استغلال ناجح لثغرة: {{ exploit.vulnerability.type }}
+                    </div>
+                    <div class="exploit-details">
+                        <p><strong>الطريقة:</strong> {{ exploit.proof_of_concept.method }}</p>
+                        {% if exploit.proof_of_concept.impact %}
+                        <p><strong>التأثير:</strong> {{ exploit.proof_of_concept.impact }}</p>
+                        {% endif %}
+                        {% if exploit.proof_of_concept.extracted_info %}
+                        <p><strong>المعلومات المستخرجة:</strong></p>
+                        <div class="data-content">{{ exploit.proof_of_concept.extracted_info }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            {% if report.extracted_data %}
+            <div class="extracted-data">
+                <h2>📊 البيانات المستخرجة</h2>
+                {% for key, value in report.extracted_data.items() %}
+                <div class="data-card">
+                    <div class="data-header">{{ key }}</div>
+                    <div class="data-content">{{ value }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            {% if not report.vulnerabilities and not report.exploits and not report.extracted_data %}
+            <div class="no-data">
+                <p>لم يتم العثور على ثغرات أو بيانات في هذا الفحص.</p>
+            </div>
+            {% endif %}
+            
+            {% else %}
+            <div class="no-data">
+                <p>التقرير غير متاح أو تم حذفه.</p>
+                <a href="/reports" class="btn">العودة للتقارير</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
